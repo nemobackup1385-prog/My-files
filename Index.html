@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بازار پول: تعادل و جابه‌جایی‌ها</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F4F6F8;--surface:#FFFFFF;--ink:#101828;--muted:#5B6676;--grid:#E1E6EC;--line:#9AA5B4;
+  --md:#1F5FD6;--ms:#C0266D;--gap:#B45309;color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E141B;--surface:#151D27;--ink:#E8EDF3;--muted:#98A4B3;--grid:#263241;--line:#5A6B80;
+    --md:#6EA0FF;--ms:#FF7BB0;--gap:#F5A524;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E141B;--surface:#151D27;--ink:#E8EDF3;--muted:#98A4B3;--grid:#263241;--line:#5A6B80;
+  --md:#6EA0FF;--ms:#FF7BB0;--gap:#F5A524;color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;line-height:1.7}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 32px}
+h1{font-size:clamp(1.3rem,3vw,1.9rem);font-weight:800;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border-radius:14px;padding:14px;border:1px solid var(--grid)}
+svg{display:block;width:100%;height:auto;direction:rtl}
+svg text{font-family:inherit;direction:rtl}
+.grid-l{stroke:var(--grid);stroke-width:1}
+.axis{stroke:var(--line);stroke-width:1.6}
+.tick{fill:var(--muted);font-size:12px}
+.atitle{fill:var(--muted);font-size:14px;font-weight:600}
+.md{stroke:var(--md);stroke-width:3.5;stroke-linecap:round}
+.ms{stroke:var(--ms);stroke-width:3.5;stroke-linecap:round}
+.ghost{stroke-dasharray:7 6;opacity:.45}
+.lab-md{fill:var(--md);font-size:15px;font-weight:800}
+.lab-ms{fill:var(--ms);font-size:15px;font-weight:800}
+.guide{stroke:var(--line);stroke-width:1.2;stroke-dasharray:4 4}
+.eq{fill:var(--ink)}
+.eq0{fill:var(--surface);stroke:var(--ink);stroke-width:2}
+.lab-eq{fill:var(--ink);font-size:14px;font-weight:800}
+.rl{fill:var(--ink);font-size:13px;font-weight:800;paint-order:stroke;stroke:var(--surface);stroke-width:4px}
+.gapline{stroke:var(--gap);stroke-width:6;stroke-linecap:round;opacity:.85}
+.gaplab{fill:var(--gap);font-size:13px;font-weight:800;paint-order:stroke;stroke:var(--surface);stroke-width:4px}
+.rline{stroke:var(--gap);stroke-width:1.4;stroke-dasharray:3 4}
+.arr{stroke:var(--gap);stroke-width:3;stroke-linecap:round}
+.arrh{fill:var(--gap)}
+.pt{fill:var(--surface);stroke:var(--gap);stroke-width:3}
+.panel{display:flex;flex-direction:column;gap:16px}
+.reads{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.read{background:var(--bg);border-radius:10px;padding:8px 12px}
+.read small{display:block;color:var(--muted);font-size:.78rem}
+.read b{font-size:1.35rem;font-weight:800}
+.cap h2{font-size:1.05rem;margin:0 0 4px;font-weight:800}
+.cap p{margin:4px 0;font-size:.92rem}
+.cap .cause{color:var(--muted)}
+.ctl label{display:flex;justify-content:space-between;font-weight:600;font-size:.92rem;margin-top:6px}
+.ctl input[type=range]{direction:ltr;width:100%;margin:2px 0 8px}
+#iY{accent-color:var(--md)} #iM{accent-color:var(--ms)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+button{font:inherit;font-size:.86rem;font-weight:600;padding:8px 6px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+button.y{border-color:var(--md);color:var(--md)}
+button.m{border-color:var(--ms);color:var(--ms)}
+button.d{border-color:var(--gap);color:var(--gap)}
+button.reset{grid-column:1/-1;color:var(--muted)}
+h3{font-size:.85rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<h1>بازار پول: تعادل و جابه‌جایی‌ها</h1>
+<div class="grid">
+  <div class="card">
+    <svg id="chart" viewBox="0 0 680 480" role="img" aria-label="نمودار بازار پول با منحنی تقاضای پول و عرضه پول"></svg>
+  </div>
+  <div class="panel">
+    <div class="card reads">
+      <div class="read"><small>نرخ بهره فعلی</small><b id="rNow"></b></div>
+      <div class="read"><small>نرخ بهره تعادلی</small><b id="rEq"></b></div>
+    </div>
+    <div class="card cap" aria-live="polite">
+      <h2 id="capT"></h2>
+      <p class="cause" id="capC"></p>
+      <p id="capB"></p>
+    </div>
+    <div class="card ctl">
+      <label for="iY"><span>درآمد (Y) ← جابه‌جایی Md</span><span id="vY"></span></label>
+      <input type="range" id="iY" min="130" max="170" step="1" value="150">
+      <label for="iM"><span>عرضه حقیقی پول (M/P) ← جابه‌جایی Ms</span><span id="vM"></span></label>
+      <input type="range" id="iM" min="50" max="110" step="1" value="90">
+      <div class="btns">
+        <button class="y" data-v="Y" data-val="170">افزایش درآمد</button>
+        <button class="y" data-v="Y" data-val="130">کاهش درآمد</button>
+        <button class="m" data-v="M" data-val="110">افزایش عرضه پول</button>
+        <button class="m" data-v="M" data-val="70">کاهش عرضه پول</button>
+      </div>
+      <h3>اختلال در نرخ بهره</h3>
+      <div class="btns">
+        <button class="d" id="hi">نرخ بالاتر از تعادل</button>
+        <button class="d" id="lo">نرخ پایین‌تر از تعادل</button>
+        <button class="reset" id="reset">بازنشانی</button>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+const W=680,H=480,ml=64,mr=28,mt=24,mb=64,XM=200,YM=14,K=10;
+const px=x=>ml+x/XM*(W-ml-mr), py=r=>H-mb-r/YM*(H-mt-mb);
+const fa=n=>n.toLocaleString('fa-IR',{minimumFractionDigits:1,maximumFractionDigits:1});
+const fi=n=>Math.round(n).toLocaleString('fa-IR');
+const B={Y:150,M:90}, S={Y:150,M:90,r:6}, T={Y:150,M:90};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const el=id=>document.getElementById(id);
+const rStar=()=>(S.Y-S.M)/K, rBase=(B.Y-B.M)/K;
+let raf=0;
+
+const mdLine=(Yv,cls)=>{const re=Math.min(YM,Yv/K);
+  return `<line class="md ${cls}" x1="${px(Yv)}" y1="${py(0)}" x2="${px(Yv-K*re)}" y2="${py(re)}"/>`};
+const msLine=(Mv,cls)=>`<line class="ms ${cls}" x1="${px(Mv)}" y1="${py(0)}" x2="${px(Mv)}" y2="${py(YM)}"/>`;
+
+function draw(){
+  const rs=rStar(), g=S.r-rs;
+  const sh=Math.abs(T.Y-B.Y)>.5, sm=Math.abs(T.M-B.M)>.5, moved=sh||sm;
+  let s='';
+  for(let x=0;x<=XM;x+=50)
+    s+=`<line class="grid-l" x1="${px(x)}" y1="${py(0)}" x2="${px(x)}" y2="${py(YM)}"/><text class="tick" x="${px(x)}" y="${py(0)+22}" text-anchor="middle">${fi(x)}</text>`;
+  for(let r=0;r<=YM;r+=2)
+    s+=`<line class="grid-l" x1="${px(0)}" y1="${py(r)}" x2="${px(XM)}" y2="${py(r)}"/><text class="tick" x="${ml-10}" y="${py(r)+4}" text-anchor="end">${fi(r)}٪</text>`;
+  s+=`<line class="axis" x1="${px(0)}" y1="${py(0)}" x2="${px(XM)}" y2="${py(0)}"/><line class="axis" x1="${px(0)}" y1="${py(0)}" x2="${px(0)}" y2="${py(YM)}"/>`;
+  s+=`<text class="atitle" x="${(px(0)+px(XM))/2}" y="${H-16}" text-anchor="middle">مقدار حقیقی پول (M/P)</text>`;
+  s+=`<text class="atitle" transform="translate(16 ${(mt+H-mb)/2}) rotate(-90)" text-anchor="middle">نرخ بهره (r)</text>`;
+  // ghosts: baseline curves
+  if(sh) s+=mdLine(B.Y,'ghost');
+  if(sm) s+=msLine(B.M,'ghost');
+  if(moved) s+=`<line class="guide" x1="${px(0)}" y1="${py(rBase)}" x2="${px(B.M)}" y2="${py(rBase)}"/><circle class="eq0" cx="${px(B.M)}" cy="${py(rBase)}" r="6"/><text class="lab-eq" x="${px(B.M)+12}" y="${py(rBase)+18}">E₁</text>`;
+  // current curves
+  s+=mdLine(S.Y,'')+msLine(S.M,'');
+  s+=`<text class="lab-md" x="${px(S.Y-K*1.2)+10}" y="${py(1.2)+4}">Md${sh?'₂':''}</text>`;
+  s+=`<text class="lab-ms" x="${px(S.M)+10}" y="${py(YM)+14}">Ms${sm?'₂':''}</text>`;
+  if(sh) s+=`<text class="lab-md" style="opacity:.55" x="${px(B.Y-K*1.2)+10}" y="${py(1.2)+4}">Md₁</text>`;
+  if(sm) s+=`<text class="lab-ms" style="opacity:.55" x="${px(B.M)+10}" y="${py(YM)+14}">Ms₁</text>`;
+  // disequilibrium
+  if(Math.abs(g)>.12){
+    const mx=Math.max(0,S.Y-K*S.r), x1=px(Math.min(mx,S.M)), x2=px(Math.max(mx,S.M)), y=py(S.r);
+    s+=`<line class="rline" x1="${px(0)}" y1="${y}" x2="${x2}" y2="${y}"/>`;
+    s+=`<line class="gapline" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/>`;
+    s+=`<text class="gaplab" x="${(x1+x2)/2}" y="${y+(g>0?-10:22)}" text-anchor="middle">${g>0?'مازاد عرضه پول':'مازاد تقاضای پول'}</text>`;
+    s+=`<circle class="pt" cx="${px(mx)}" cy="${y}" r="5"/><circle class="pt" cx="${px(S.M)}" cy="${y}" r="5"/>`;
+    const d=g>0?1:-1, ax=ml+16, tip=y+d*38;
+    s+=`<line class="arr" x1="${ax}" y1="${y}" x2="${ax}" y2="${tip-d*6}"/><polygon class="arrh" points="${ax-7},${tip-d*9} ${ax+7},${tip-d*9} ${ax},${tip}"/>`;
+  }
+  // equilibrium
+  s+=`<line class="guide" x1="${px(S.M)}" y1="${py(rs)}" x2="${px(S.M)}" y2="${py(0)}"/><line class="guide" x1="${px(0)}" y1="${py(rs)}" x2="${px(S.M)}" y2="${py(rs)}"/>`;
+  s+=`<circle class="eq" cx="${px(S.M)}" cy="${py(rs)}" r="7"/><text class="lab-eq" x="${px(S.M)+12}" y="${py(rs)-10}">E${moved?'₂':''}</text>`;
+  s+=`<text class="rl" x="${ml+8}" y="${py(rs)-7}">r* = ${fa(rs)}٪</text>`;
+  el('chart').innerHTML=s;
+
+  el('rNow').textContent=fa(S.r)+'٪';
+  el('rEq').textContent=fa(rs)+'٪';
+  el('vY').textContent=fi(T.Y); el('vM').textContent=fi(T.M);
+  caption(rs,g,sh,sm);
+}
+
+function caption(rs,g,sh,sm){
+  const c=[];
+  if(sh) c.push(T.Y>B.Y?'افزایش درآمد، تقاضای معاملاتی پول را زیاد می‌کند و Md به راست می‌رود.':'کاهش درآمد، تقاضای پول را کم می‌کند و Md به چپ می‌رود.');
+  if(sm) c.push(T.M>B.M?'بانک مرکزی عرضه پول را افزایش می‌دهد و Ms به راست می‌رود.':'بانک مرکزی عرضه پول را کاهش می‌دهد و Ms به چپ می‌رود.');
+  let t,b;
+  if(Math.abs(g)>.12){
+    t=g>0?'مازاد عرضه پول':'مازاد تقاضای پول';
+    b=g>0?'مردم بیش از نیازشان پول دارند، اوراق قرضه می‌خرند، قیمت اوراق بالا می‌رود و نرخ بهره پایین می‌آید.'
+         :'مردم پول نقد کم دارند، اوراق قرضه می‌فروشند، قیمت اوراق پایین می‌آید و نرخ بهره بالا می‌رود.';
+  }else{
+    t='بازار پول در تعادل است';
+    if(sh||sm){
+      const d=rs-rBase;
+      b=Math.abs(d)<.05?'نرخ بهره تعادلی تغییر نکرد.':`نرخ بهره تعادلی از ${fa(rBase)}٪ به ${fa(rs)}٪ ${d>0?'افزایش':'کاهش'} یافت.`;
+    }else b='در نرخ بهره تعادلی، مقدار تقاضای پول با مقدار عرضه پول برابر است (Md = Ms).';
+  }
+  el('capT').textContent=t; el('capC').textContent=c.join(' '); el('capB').textContent=b;
+  el('capC').style.display=c.length?'':'none';
+}
+
+function step(){
+  const k=reduce?1:.07, kr=reduce?1:.025;
+  S.Y+=(T.Y-S.Y)*k; S.M+=(T.M-S.M)*k;
+  if(Math.abs(T.Y-S.Y)<.05)S.Y=T.Y;
+  if(Math.abs(T.M-S.M)<.05)S.M=T.M;
+  const rs=rStar();
+  S.r+=(rs-S.r)*kr;
+  if(Math.abs(rs-S.r)<.02)S.r=rs;
+  draw();
+  raf=(S.Y!==T.Y||S.M!==T.M||S.r!==rStar())?requestAnimationFrame(step):0;
+}
+const kick=()=>{if(!raf)raf=requestAnimationFrame(step)};
+const sync=()=>{el('iY').value=T.Y;el('iM').value=T.M};
+
+el('iY').oninput=e=>{T.Y=+e.target.value;kick()};
+el('iM').oninput=e=>{T.M=+e.target.value;kick()};
+document.querySelectorAll('button[data-v]').forEach(b=>b.onclick=()=>{T[b.dataset.v]=+b.dataset.val;sync();kick()});
+el('hi').onclick=()=>{S.r=Math.min(13.5,rStar()+3);kick()};
+el('lo').onclick=()=>{S.r=Math.max(.4,rStar()-3);kick()};
+el('reset').onclick=()=>{T.Y=B.Y;T.M=B.M;sync();kick()};
+draw();
+</script>
+</body>
+</html>
